@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="1024" height="1024">
-  <title>PlotPair</title>
-  <rect width="100" height="100" rx="22" fill="#381932"/>
-  <rect x="18" y="18" width="34" height="34" rx="6" fill="#FFF3E6"/>
-  <rect x="43" y="43" width="44" height="44" rx="11" fill="#381932"/>
-  <rect x="52" y="52" width="26" height="26" rx="2" fill="none" stroke="#FFF3E6" stroke-width="8"/>
-  <circle cx="35" cy="35" r="5.2" fill="#381932"/>
-  <circle cx="65" cy="65" r="5.2" fill="#FFF3E6"/>
-</svg>
