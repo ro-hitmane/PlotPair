@@ -184,17 +184,38 @@
     </div>
 
     <script>
-      // UX Script to handle the copy button
-      function copyFormula() {
-        const text = document.getElementById("formulaText").innerText;
-        navigator.clipboard.writeText(text).then(() => {
-          const btn = document.querySelector(".copy-btn");
-          btn.innerText = "Copied!";
-          setTimeout(() => {
-            btn.innerText = "Copy";
-          }, 2000);
-        });
+    // UX Script to handle the copy button safely inside the Office.js sandbox
+    function copyFormula() {
+      const formulaElement = document.getElementById("formulaText");
+      const textToCopy = formulaElement.innerText;
+      
+      // Create a temporary textarea to hold the text
+      const tempTextArea = document.createElement("textarea");
+      tempTextArea.value = textToCopy;
+      
+      // Move it off-screen so it is invisible to the user
+      tempTextArea.style.position = "absolute";
+      tempTextArea.style.left = "-9999px";
+      document.body.appendChild(tempTextArea);
+      
+      // Select and copy the text
+      tempTextArea.select();
+      
+      try {
+        // Execute the legacy copy command which works inside the Excel sandbox
+        document.execCommand('copy');
+        
+        // Visual feedback on the button
+        const btn = document.querySelector(".copy-btn");
+        btn.innerText = "Copied!";
+        setTimeout(() => { btn.innerText = "Copy"; }, 2000);
+      } catch (err) {
+        console.error("Failed to copy formula: ", err);
+      } finally {
+        // Clean up the temporary element
+        document.body.removeChild(tempTextArea);
       }
-    </script>
+    }
+  </script>
   </body>
 </html>

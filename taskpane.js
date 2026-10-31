@@ -77,7 +77,6 @@
 
         if (btnRefresh) {
           btnRefresh.textContent = "Refreshed!";
-          // Updated to match the new compact PlotPair UI button text
           setTimeout(() => {
             btnRefresh.textContent = "↻ Refresh Data";
           }, 1500);
@@ -88,7 +87,6 @@
     }, 50);
   }
 
-  // Updated to parse formatted HTML for the PlotPair dashboard instead of raw text
   function setStatus(htmlContent) {
     const el = document.getElementById("statusOutput");
     if (el) el.innerHTML = htmlContent;
@@ -182,7 +180,7 @@
         );
 
         context.application.suspendApiCalculationUntilNextSync();
-        setStatus("3/3 Generating Matched Pairs Output...");
+        setStatus("3/3 Generating Audit 1 (Matched Pairs) Tab...");
 
         const pairsMatrix = [
           [
@@ -204,9 +202,17 @@
             Number(m.mahalanobisDistance.toFixed(6)),
           ]);
         });
-        await writeMatrixToSheet(context, "Audit_1_Matched_Pairs", pairsMatrix);
 
-        // Format as a clean, dashboard-style HTML output for the new UI
+        // Generate a dynamic, unique sheet name using k and a timestamp
+        const now = new Date();
+        const timeSuffix =
+          now.getHours().toString().padStart(2, "0") +
+          now.getMinutes().toString().padStart(2, "0") +
+          now.getSeconds().toString().padStart(2, "0");
+        const auditSheetName = `Audit_1_k${k}_${timeSuffix}`;
+
+        await writeMatrixToSheet(context, auditSheetName, pairsMatrix);
+
         const dashboardHTML = `
           <div style="font-weight: 700; color: #166534; font-size: 13px; margin-bottom: 8px; display: flex; align-items: center;">
             <svg style="width: 14px; height: 14px; margin-right: 6px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
@@ -221,6 +227,9 @@
             
             <div style="font-weight:600;">Action:</div>
             <div>Source Sheets NOT modified</div>
+            
+            <div style="font-weight:600;">Generated:</div>
+            <div>${auditSheetName}</div>
           </div>
         `;
         setStatus(dashboardHTML);
