@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PlotPair</title>
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <script src="matchingEngine.js"></script>
+    <script src="taskpane.js"></script>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        margin: 0;
+        padding: 16px;
+        background: #effcf2;
+        color: #0f172a;
+        font-size: 13px;
+      }
+      .card {
+        background: #effcf2;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 14px;
+        margin-bottom: 14px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      }
+      h2 {
+        margin: 0 0 4px 0;
+        font-size: 15px;
+        color: #064734; /* Primary Dark Green */
+      }
+      .subtitle {
+        font-size: 11.5px;
+        color: #64748b; /* Softened subtitle */
+        margin-bottom: 16px;
+      }
+      .flex-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 4px;
+        margin-top: 12px;
+      }
+      label {
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0;
+      }
+      .refresh-link {
+        font-size: 11px;
+        color: #064734;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        padding: 0;
+        text-decoration: underline;
+      }
+      .refresh-link:hover {
+        color: #042f22;
+      }
+      select,
+      input {
+        width: 100%;
+        padding: 7px 8px;
+        border: 1px solid #cbd5e1;
+        border-radius: 5px;
+        font-size: 13px;
+        box-sizing: border-box;
+        background: #effcf2;
+      }
+      .btn-primary {
+        width: 100%;
+        margin-top: 18px;
+        padding: 10px 12px;
+        background: #064734; /* Primary Dark Green */
+        color: #ffffff;
+        font-weight: 600;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13.5px;
+        transition: background 0.2s;
+      }
+      .btn-primary:hover {
+        background: #042f22;
+      }
+
+      .status-box {
+        font-size: 12px;
+        line-height: 1.6;
+        white-space: pre-line;
+        color: #064734;
+        background: #e0ffc2; /* Mint Green Success Background */
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #c3eaa0;
+        font-weight: 500;
+      }
+
+      .code-container {
+        position: relative;
+        margin-top: 8px;
+      }
+      code {
+        display: block;
+        background: #e0ffc2; /* Mint Green */
+        color: #064734; /* Primary Dark Green */
+        padding: 10px 12px;
+        border-radius: 6px;
+        font-size: 11.5px;
+        font-family: monospace;
+        border: 1px solid #c3eaa0;
+      }
+      .copy-btn {
+        position: absolute;
+        right: 6px;
+        top: 6px;
+        background: #ffffff;
+        border: 1px solid #c3eaa0;
+        color: #064734;
+        border-radius: 4px;
+        padding: 3px 8px;
+        font-size: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
+      .copy-btn:hover {
+        background: #f8fafc;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Configuration</h2>
+      <div class="subtitle">Global Jonker-Volgenant Bipartite Solver</div>
+
+      <!-- Demoted Refresh Button inline with the first label -->
+      <div class="flex-header" style="margin-top: 0">
+        <label for="projSource">Project Data Source:</label>
+        <button id="btnRefresh" class="refresh-link">↻ Refresh Data</button>
+      </div>
+      <select id="projSource"></select>
+
+      <div class="flex-header">
+        <label for="ctrlSource">Control Data Source:</label>
+      </div>
+      <select id="ctrlSource"></select>
+
+      <div class="flex-header">
+        <label for="kSelect">Neighbors per Plot (k):</label>
+      </div>
+      <select id="kSelect">
+        <option value="5" selected>k = 5 (Controls Locked)</option>
+        <option value="7">k = 7 (Controls Locked)</option>
+        <option value="10">k = 10 (Controls Locked)</option>
+      </select>
+
+      <button id="btnRunSort" class="btn-primary">
+        Match Data & Build Output
+      </button>
+    </div>
+
+    <div class="card">
+      <label style="margin-top: 0">Execution Telemetry:</label>
+      <div style="margin-top: 8px" id="statusOutput" class="status-box">
+        Ready. Select your Project and Control data sources above.
+      </div>
+    </div>
+
+    <div class="card">
+      <label style="margin-top: 0">In-Cell Formula Mode:</label>
+      <div class="subtitle" style="margin-bottom: 0">
+        Generate the match table dynamically in any cell:
+      </div>
+      <div class="code-container">
+        <code id="formulaText">
+          =VM0047.MATCH(ProjectPlots[#All], ControlPlots[#All], 5)
+        </code>
+        <button class="copy-btn" onclick="copyFormula()">Copy</button>
+      </div>
+    </div>
+
+    <script>
+      // UX Script to handle the copy button
+      function copyFormula() {
+        const text = document.getElementById("formulaText").innerText;
+        navigator.clipboard.writeText(text).then(() => {
+          const btn = document.querySelector(".copy-btn");
+          btn.innerText = "Copied!";
+          setTimeout(() => {
+            btn.innerText = "Copy";
+          }, 2000);
+        });
+      }
+    </script>
+  </body>
+</html>

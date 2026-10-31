@@ -1,0 +1,14 @@
+{
+  "name": "plotpair",
+  "version": "1.1.0",
+  "description": "PlotPair: Cross-device Office.js Excel Plug-in for VM0047 Global Optimal k-NN Matching",
+  "scripts": {
+    "serve": "http-server -S -C cert.pem -K key.pem -p 3000 --cors",
+    "start:desktop": "office-addin-debugging start manifest.xml desktop"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "office-addin-debugging": "^6.0.0",
+    "office-addin-dev-certs": "^2.0.0"
+  }
+}

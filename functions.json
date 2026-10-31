@@ -1,0 +1,33 @@
+{
+  "functions": [
+    {
+      "id": "MATCH",
+      "name": "MATCH",
+      "description": "Runs VM0047 Global Optimal Bipartite k-NN Matching without replacement and spills the sorted match ledger.",
+      "helpUrl": "https://verra.org/methodologies/vm0047/",
+      "result": {
+        "dimensionality": "matrix"
+      },
+      "parameters": [
+        {
+          "name": "projectTable",
+          "description": "Project Plots range including header row (Column 1 = Plot_ID, Columns 2+ = Coordinates/Covariates)",
+          "type": "any",
+          "dimensionality": "matrix"
+        },
+        {
+          "name": "controlTable",
+          "description": "Control Plots range including header row (Column 1 = Control_ID, Columns 2+ = Coordinates/Covariates)",
+          "type": "any",
+          "dimensionality": "matrix"
+        },
+        {
+          "name": "k",
+          "description": "Number of nearest neighbor control plots per project plot (5 or 7). Default is 5.",
+          "type": "number",
+          "optional": true
+        }
+      ]
+    }
+  ]
+}
